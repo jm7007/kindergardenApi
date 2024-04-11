@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lee Jongmin
   @group             : i2max
-  @last modified on  : 08-04-2024
+  @last modified on  : 11-04-2024
   @last modified by  : Lee Jongmin
   Modifications Log
   Ver   Date         Author        Modification
@@ -10,4 +10,35 @@
 -->
 <template>
     <h2>Hello World!!</h2>
+    <lightning-layout multiple-rows>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-card title="Search Box">
+                
+            </lightning-card>
+        </lightning-layout-item>
+        <lightning-layout-item size="7" padding="around-small">
+            <lightning-card title="Table">
+                <lightning-combobox
+                    name="sido"
+                    label="시도"
+                    value={sido}
+                    options={sidoOptions}
+                    onchange={handleInputChange}
+                ></lightning-combobox>
+                <lightning-combobox
+                    name="sgg"
+                    label="시군구"
+                    value={sgg}
+                    options={sggOptions}
+                    onchange={handleInputChange}
+                ></lightning-combobox>
+            </lightning-card>
+        </lightning-layout-item>
+        <lightning-layout-item size="5" padding="around-small">
+            <lightning-card title="Map">
+                
+            </lightning-card>
+        </lightning-layout-item>
+
+    </lightning-layout>
 </template>
