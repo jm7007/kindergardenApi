@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Lee Jongmin
  * @group             : i2max
- * @last modified on  : 11-04-2024
+ * @last modified on  : 12-04-2024
  * @last modified by  : Lee Jongmin
  * Modifications Log
  * Ver   Date         Author        Modification
@@ -14,34 +14,67 @@ import getKindergartenInfo from "@salesforce/apex/KindergardenController.getKind
 
 export default class KindergardenContainer extends LightningElement {
 
-    sido = "11";
-    sgg = "11140";
+    sido = "---";
+    sgg = "";
+
+    infoData;
+    selectedSchool;
+
+    isLoading = false;
+
 
     get sidoOptions() {
         return SIDO_CODE_LIST;
     }
 
     get sggOptions() {
-        return SGG_CODE_LIST;
+        return SGG_CODE_LIST.filter(sgg => sgg.value.startsWith(this.sido));
     }
 
-    async handleInputChange(event) {
+
+
+    handleSidoChange(event) {
+        this.sido = event.detail.name;
+        this.sgg = null;
+    }
+
+    async handleSggChange(event) {
         try {
-            this[event.target.name] = event.target.value;
-            console.log("this." + event.target.name + ": " + event.target.value);
-            console.log(this.sido + this.sgg);
-            if (this.sido && this.sgg) {
-                let result = await getKindergartenInfo({
-                    params: {
-                        sidoCode: this.sido,
-                        sggCode: this.sgg,
-                    },
-                    actionName: "basicInfo"
-                });
-                console.log(result);
+            this.isLoading = true;
+            this.sgg = event.detail.name;
+
+            if (!this.sido || !this.sgg) {
+                return;
             }
+
+            let result = await getKindergartenInfo({
+                params: {
+                    sidoCode: this.sido,
+                    sggCode: this.sgg,
+                },
+                actionName: "basicInfo"
+            });
+
+            console.log(result);
+
+            if (JSON.parse(result).status !== "SUCCESS") {
+                return;
+            }
+
+            this.infoData = JSON.parse(result).kinderInfo;
+
+            console.log('infoData: ' + JSON.stringify(this.infoData, 0, 2));
+
+            this.isLoading = false;
         } catch (e) {
             console.log(JSON.stringify(e, 0, 2));
+            this.isLoading = false;
         }
+    }
+
+    handleSchoolSelect(event) {
+        this.selectedSchool = this.infoData[parseInt(event.detail.name) - 1];
+
+        console.log('selected School: ' + JSON.stringify(this.selectedSchool, 0, 2));
     }
 }

@@ -2,43 +2,54 @@
   @description       : 
   @author            : Lee Jongmin
   @group             : i2max
-  @last modified on  : 11-04-2024
+  @last modified on  : 12-04-2024
   @last modified by  : Lee Jongmin
   Modifications Log
   Ver   Date         Author        Modification
   1.0   08-04-2024   Lee Jongmin   Initial Version
 -->
 <template>
-    <h2>Hello World!!</h2>
+    <template lwc:if={isLoading}>
+        <lightning-spinner size="small" alternative-text="Loading..."></lightning-spinner>
+    </template>
+    <lightning-card>
+        <h3 slot="title">
+            <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+            유치원 알리미
+        </h3>
     <lightning-layout multiple-rows>
-        <lightning-layout-item size="12" padding="around-small">
-            <lightning-card title="Search Box">
+        <lightning-layout-item size="6" padding="around-small">
+            <lightning-card label="table" hide-header>
+                <lightning-layout class="kg-layout">
+                    <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="3">
+                        <lightning-vertical-navigation class="kg-nav" onselect={handleSidoChange}>
+                            <template for:each={sidoOptions} for:item="sido">
+                                <lightning-vertical-navigation-item class="kg-nav-item" key={sido.value} name={sido.value} label={sido.label}></lightning-vertical-navigation-item>
+                            </template>
+                        </lightning-vertical-navigation>
+                    </lightning-layout-item>
+                    <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="3">
+                        <lightning-vertical-navigation class="kg-nav" onselect={handleSggChange} selected-item={sido}>
+                            <template lwc:if={sggOptions} for:each={sggOptions} for:item="sgg">
+                                <lightning-vertical-navigation-item class="kg-nav-item" key={sgg.value} name={sgg.value} label={sgg.label}></lightning-vertical-navigation-item>
+                            </template>
+                        </lightning-vertical-navigation>
+                    </lightning-layout-item>
+                    <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="6">
+                    <lightning-vertical-navigation class="kg-nav" label="유치원" onselect={handleSchoolSelect}>
+                        <template lwc:if={infoData} for:each={infoData} for:item="info">
+                            <lightning-vertical-navigation-item class="kg-nav-item" key={info.key} name={info.key} label={info.kindername}></lightning-vertical-navigation-item>
+                        </template>
+                    </lightning-vertical-navigation>
+                </lightning-layout-item>
+                </lightning-layout>
+            </lightning-card>
+        </lightning-layout-item>
+        <lightning-layout-item size="6" padding="around-small">
+            <lightning-card class="slds-p-around_small" hide-header>
                 
             </lightning-card>
         </lightning-layout-item>
-        <lightning-layout-item size="7" padding="around-small">
-            <lightning-card title="Table">
-                <lightning-combobox
-                    name="sido"
-                    label="시도"
-                    value={sido}
-                    options={sidoOptions}
-                    onchange={handleInputChange}
-                ></lightning-combobox>
-                <lightning-combobox
-                    name="sgg"
-                    label="시군구"
-                    value={sgg}
-                    options={sggOptions}
-                    onchange={handleInputChange}
-                ></lightning-combobox>
-            </lightning-card>
-        </lightning-layout-item>
-        <lightning-layout-item size="5" padding="around-small">
-            <lightning-card title="Map">
-                
-            </lightning-card>
-        </lightning-layout-item>
-
     </lightning-layout>
+</lightning-card>
 </template>

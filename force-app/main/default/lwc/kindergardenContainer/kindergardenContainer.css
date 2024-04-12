@@ -1,0 +1,16 @@
+.kg-nav {
+}
+.kg-nav-item{
+    font-size: 15px;
+    text-align: center;
+    height:60px;
+    display:flex;
+    vertical-align: middle;
+    border: 0.3px gray solid;
+}
+.kg-layout{
+    height: 600px;
+}
+.kg-layoutitem{
+    overflow: auto;
+}
