@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Lee Jongmin
  * @group             : i2max
- * @last modified on  : 11-04-2024
+ * @last modified on  : 15-04-2024
  * @last modified by  : Lee Jongmin
  * Modifications Log
  * Ver   Date         Author        Modification
@@ -81,6 +81,83 @@ public with sharing class KindergardenController {
 
         }catch(Exception e){
             System.Debug('error occur: KindergardenController.getKindergardenInfo');
+            System.Debug(LoggingLevel.ERROR, e);
+            throw e;
+        }
+    }
+    @AuraEnabled(cacheable=true)
+    public static String addressToCoordinate(String address){
+        // String apiKey = '28FE5684-1D6B-3E6D-9B57-FD0F82B3D46B';
+        // String requestURL =
+        // 'https://api.vworld.kr/req/address?'
+        // + 'service=address&request=getcoord&version=2.0&crs=epsg:4326&'
+        // + 'address=' + address.replace(' ', '%20')
+        // + '&refine=true&simple=true&format=json&type=road&key='
+        // + apiKey;
+
+        // String requestURL = 'https://apis.vworld.kr/new2coord.do?q=대전광역시%20중구%20계백로1615번길%2034&output=xml&epsg=epsg:4326&apiKey=28FE5684-1D6B-3E6D-9B57-FD0F82B3D46B';
+
+        // System.debug('url: ' + requestURL);
+
+        // try {
+        //     Http h = new Http();
+        //     HttpRequest req = new HttpRequest();
+        //     req.setTimeout(20000);
+        //     req.setEndpoint(requestURL);
+        //     req.setHeader('Accept', 'application/json');
+        //     req.setMethod('GET');
+
+        //     String resBody = h.send(req).getBody();
+        //     System.debug('resBody: ' + resBody);
+
+        //     return resBody;
+        // } catch (Exception e) {
+        //     throw new AuraHandledException(e.getMessage());
+        // }
+
+        try {
+            Map<String, String> keyInfo = getNaverMapAuthentication();
+
+            String requestURL =
+                'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?'
+                + 'query=' + EncodingUtil.urlEncode(address,'UTF-8');
+
+            System.debug(requestURL);
+
+            Http h = new Http();
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(requestURL);
+            req.setHeader('X-NCP-APIGW-API-KEY-ID',keyInfo.get('clientId'));
+            req.setHeader('X-NCP-APIGW-API-KEY',keyInfo.get('key'));
+            req.setHeader('Content-Type', 'application/json');
+            req.setMethod('GET');
+
+            String resBody = h.send(req).getBody();
+            System.debug('resBody: ' + resBody);
+
+            return resBody;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+        
+    }
+    
+    @AuraEnabled(cacheable=true)
+    public static Map<String, String> getNaverMapAuthentication(){
+        try{
+            Api__mdt authentication = [
+                SELECT Id, Key__c, Client_ID__c
+                FROM Api__mdt
+                WHERE DeveloperName = 'naverMap'
+                LIMIT 1
+            ];
+
+            return new Map<String, String>{
+                'clientId' => authentication.Client_ID__c,
+                'key' => authentication.Key__c
+            };
+        }catch(Exception e){
+            System.Debug('error occur: KindergardenController.getNaverMapInfo');
             System.Debug(LoggingLevel.ERROR, e);
             throw e;
         }

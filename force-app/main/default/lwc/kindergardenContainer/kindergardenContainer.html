@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lee Jongmin
   @group             : i2max
-  @last modified on  : 12-04-2024
+  @last modified on  : 15-04-2024
   @last modified by  : Lee Jongmin
   Modifications Log
   Ver   Date         Author        Modification
@@ -12,44 +12,143 @@
     <template lwc:if={isLoading}>
         <lightning-spinner size="small" alternative-text="Loading..."></lightning-spinner>
     </template>
-    <lightning-card>
-        <h3 slot="title">
-            <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
-            유치원 알리미
-        </h3>
     <lightning-layout multiple-rows>
+        <lightning-layout-item size="12" padding="around-small">
+            <lightning-card>
+                <h3 slot="title">
+                    <lightning-icon class="slds-m-right_small" icon-name="standard:account" size="small"></lightning-icon>
+                    유치원 알리미
+                </h3>
+            </lightning-card>
+        </lightning-layout-item>
         <lightning-layout-item size="6" padding="around-small">
             <lightning-card label="table" hide-header>
                 <lightning-layout class="kg-layout">
+                    <!-- 시도 select -->
                     <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="3">
                         <lightning-vertical-navigation class="kg-nav" onselect={handleSidoChange}>
                             <template for:each={sidoOptions} for:item="sido">
-                                <lightning-vertical-navigation-item class="kg-nav-item" key={sido.value} name={sido.value} label={sido.label}></lightning-vertical-navigation-item>
+                                <lightning-vertical-navigation-item class={sido.class} key={sido.value} name={sido.value} label={sido.label}></lightning-vertical-navigation-item>
                             </template>
                         </lightning-vertical-navigation>
                     </lightning-layout-item>
+                    <!-- 시군구 select -->
                     <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="3">
                         <lightning-vertical-navigation class="kg-nav" onselect={handleSggChange} selected-item={sido}>
                             <template lwc:if={sggOptions} for:each={sggOptions} for:item="sgg">
-                                <lightning-vertical-navigation-item class="kg-nav-item" key={sgg.value} name={sgg.value} label={sgg.label}></lightning-vertical-navigation-item>
+                                <lightning-vertical-navigation-item class={sgg.class} key={sgg.value} name={sgg.value} label={sgg.label}></lightning-vertical-navigation-item>
                             </template>
                         </lightning-vertical-navigation>
                     </lightning-layout-item>
+                    <!-- 유치원 select -->
                     <lightning-layout-item class="kg-layoutitem slds-p-around_small" size="6">
                     <lightning-vertical-navigation class="kg-nav" label="유치원" onselect={handleSchoolSelect}>
-                        <template lwc:if={infoData} for:each={infoData} for:item="info">
-                            <lightning-vertical-navigation-item class="kg-nav-item" key={info.key} name={info.key} label={info.kindername}></lightning-vertical-navigation-item>
+                        <template lwc:if={kinderInfoList} for:each={kinderInfoList} for:item="info">
+                            <lightning-vertical-navigation-item class={info.class} key={info.key} name={info.key} label={info.kindername}></lightning-vertical-navigation-item>
                         </template>
                     </lightning-vertical-navigation>
                 </lightning-layout-item>
                 </lightning-layout>
             </lightning-card>
         </lightning-layout-item>
+        <!-- 유치원 정보 -->
         <lightning-layout-item size="6" padding="around-small">
-            <lightning-card class="slds-p-around_small" hide-header>
-                
-            </lightning-card>
+            <template lwc:if={selectedSchool}>
+                <lightning-card>
+                    <h3 slot="title">
+                        <lightning-icon class="slds-m-right_small" icon-name="standard:store_group" size="small"></lightning-icon>
+                        {selectedSchool.kindername}
+                    </h3>
+                    <lightning-layout multiple-rows>
+                        <!-- 네이버 지도 -->
+                        <lightning-layout-item size="12" padding="around-small">
+                            <img src={naverMapImgSrc}>
+                        </lightning-layout-item>
+                        <!-- 네이버 지도 end-->
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">유치원명</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.kindername}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">대표자명</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.rppnname}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">설립유형</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.establish}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">설립일</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.edate}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">전화번호</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.telno}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">홈페이지</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.hpaddr}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">인가총정원수</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.prmstfcnt}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">운영시간</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.opertime}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">주소</span>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-form-element__static">{selectedSchool.addr}</div>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+                </lightning-card>
+            </template>
+            <template lwc:else>
+                <lightning-card hide-header>
+                    <div class="notSelectedSchool">
+                        지역과 유치원을 선택해주세요
+                    </div>
+                </lightning-card>
+            </template>
         </lightning-layout-item>
+        <!-- 유치원 정보 end-->
     </lightning-layout>
-</lightning-card>
 </template>
