@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>유치원 알리미</label>
+    <protected>false</protected>
+    <values>
+        <field>Client_ID__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>End_Point__c</field>
+        <value xsi:type="xsd:string">https://e-childschoolinfo.moe.go.kr/api/notice/</value>
+    </values>
+    <values>
+        <field>Key__c</field>
+        <value xsi:type="xsd:string">570aa2716301428ea993948221fd77f9</value>
+    </values>
+</CustomMetadata>
